@@ -3,9 +3,11 @@ def importData():
         inputDataArray = input_file.readlines()
     return inputDataArray
 
-def calculateWinningBoard(inputDataArray):
+def calculateOverlaps(inputDataArray):
 
     cleanInputArray = []
+
+    plotDict = {}
 
     for line in inputDataArray:
         if (line[-1] == '\n'):
@@ -13,96 +15,93 @@ def calculateWinningBoard(inputDataArray):
         else:
             cleanInputArray.append(line)
     
-    numbers = cleanInputArray[0].split(',')
+    lineArray = []
+
+    for line in cleanInputArray:
+        lineArray.append(lineObject(line))
     
-    numBoards = int((len(cleanInputArray) - 1)/6)
-
-    boards = []
-
-    for x in range(numBoards):
-        boardNumArray = []
-        for y in range(5):
-            lineNum = 2 + (x * 6) + y
-            lineSplit = inputDataArray[lineNum].split()
-            for num in lineSplit:
-                boardNumArray.append(int(num))
-        
-        boards.append(bingoBoard(boardNumArray))
-
-    return getWinningBoard(numbers, boards)
+    for lineObj in lineArray:
+        for point in lineObj.listPoints():
+            if point in plotDict:
+                plotDict[point] += 1
+            else:
+                plotDict[point] = 1
     
+    count = 0
 
-def getWinningBoard(numbers, boards):
-    boardArray = boards
-    for x in numbers:
-
-        workingBoards = []
-
-        for board in boardArray:
-            board.addNumber(int(x))
-            if (not board.checkWin()):
-                workingBoards.append(board)
-
-        if (len(boardArray) == 1):
-            if (boardArray[0].checkWin()):
-                print(boardArray[0].getUnmarkedTotal())
-                print(x)
-                return boardArray[0].getUnmarkedTotal() * int(x)
-
-        boardArray = workingBoards
-
-class bingoBoard:
-
-    def __init__(self, boardArray):
-        self.boardNumArray = boardArray
-        self.boardWinArray = [0] * 25
+    for key in plotDict:
+        if (plotDict[key] > 1):
+            count += 1
+    
+    return count
 
     
-    def addNumber(self,inputNumber):
-        for x in range(25):
-            if (self.boardNumArray[x] == inputNumber):
-                self.boardWinArray[x] = 1
 
-    def checkWin(self):
-        #check rows
-        for x in range(5):
-            count = 0
-            for y in range(5):
-                position = (x * 5) + y
-                if(self.boardWinArray[position] == 1):
-                    count += 1
-            if (count == 5):
-                return True
-        
-        #check columns
-        for x in range(5):
-            count = 0
-            for y in range(5):
-                position = (y * 5) + x
-                if(self.boardWinArray[position] == 1):
-                    count += 1
-            if (count == 5):
-                return True
-        
-        return False
+class lineObject:
+
+    def __init__(self, lineInfo):
+
+        splitPts = lineInfo.split(' -> ')
+        ptA = splitPts[0].split(',')
+        ptB = splitPts[1].split(',')
+
+        self.x1 = int(ptA[0])
+        self.y1 = int(ptA[1])
+        self.x2 = int(ptB[0])
+        self.y2 = int(ptB[1])
+
+        self.pointList = []
+
+        if (self.x1 == self.x2):
+            if (self.y1 < self.y2):
+                current = self.y1
+                while (current < self.y2 + 1):
+                    self.pointList.append(str(self.x1) + ',' + str(current))
+                    current += 1
+            elif (self.y2 < self.y1):
+                current = self.y2
+                while (current < self.y1 + 1):
+                    self.pointList.append(str(self.x1) + ',' + str(current))
+                    current += 1
+
+        elif (self.y1 == self.y2):
+            if (self.x1 < self.x2):
+                current = self.x1
+                while (current < self.x2 + 1):
+                    self.pointList.append(str(current) + ',' + str(self.y1))
+                    current += 1
+            elif (self.x2 < self.x1):
+                current = self.x2
+                while (current < self.x1 + 1):
+                    self.pointList.append(str(current) + ',' + str(self.y1))
+                    current += 1
+        ## diagonal
+        else:
+            Yincrement = 1
+            Xincrement = 1
+
+            if (self.x1 > self.x2):
+                Xincrement = -1
+            if (self.y1 > self.y2):
+                Yincrement = -1
+                
+            currentX = self.x1
+            currentY = self.y1
+            while (currentX != self.x2):
+                self.pointList.append(str(currentX) + ',' + str(str(currentY)))
+                currentX += Xincrement
+                currentY += Yincrement
+
+            self.pointList.append(str(self.x2) + ',' + str(self.y2))
+
     
-    def getUnmarkedTotal(self):
-        total = 0
-        for x in range(25):
-            if (self.boardWinArray[x] == 0):
-                total += self.boardNumArray[x]
-        return total
+    def listPoints(self):
+        return self.pointList
+
+
     
-    def printBoard(self):
-        boardWinArray = self.boardWinArray
-        print(str(boardWinArray[0]) + str(boardWinArray[1]) + str(boardWinArray[2]) + str(boardWinArray[3]) + str(boardWinArray[4]))
-        print(str(boardWinArray[5]) + str(boardWinArray[6]) + str(boardWinArray[7]) + str(boardWinArray[8]) + str(boardWinArray[9]))
-        print(str(boardWinArray[10]) + str(boardWinArray[11]) + str(boardWinArray[12]) + str(boardWinArray[13]) + str(boardWinArray[14]))
-        print(str(boardWinArray[15]) + str(boardWinArray[16]) + str(boardWinArray[17]) + str(boardWinArray[18]) + str(boardWinArray[19]))
-        print(str(boardWinArray[20]) + str(boardWinArray[21]) + str(boardWinArray[22]) + str(boardWinArray[23]) + str(boardWinArray[24]))
-        print(' ')
 
 
         
 if __name__ == '__main__':
-    print(calculateWinningBoard(importData()))
+    print(calculateOverlaps(importData()))

@@ -27,8 +27,13 @@ def calculateOverlaps(inputDataArray):
             else:
                 plotDict[point] = 1
     
-    for ket in plotDict:
-        print(key)
+    count = 0
+
+    for key in plotDict:
+        if (plotDict[key] > 1):
+            count += 1
+    
+    return count
 
     
 
@@ -48,12 +53,31 @@ class lineObject:
         self.pointList = []
 
         if (self.x1 == self.x2):
-            if ()
-        else if (self.y1 == self.y2):
-            print('aaa')
+            if (self.y1 < self.y2):
+                current = self.y1
+                while (current < self.y2 + 1):
+                    self.pointList.append(str(self.x1) + ',' + str(current))
+                    current += 1
+            elif (self.y2 < self.y1):
+                current = self.y2
+                while (current < self.y1 + 1):
+                    self.pointList.append(str(self.x1) + ',' + str(current))
+                    current += 1
+
+        elif (self.y1 == self.y2):
+            if (self.x1 < self.x2):
+                current = self.x1
+                while (current < self.x2 + 1):
+                    self.pointList.append(str(current) + ',' + str(self.y1))
+                    current += 1
+            elif (self.x2 < self.x1):
+                current = self.x2
+                while (current < self.x1 + 1):
+                    self.pointList.append(str(current) + ',' + str(self.y1))
+                    current += 1
     
     def listPoints(self):
-        print('aaa')
+        return self.pointList
 
 
     
@@ -61,4 +85,4 @@ class lineObject:
 
         
 if __name__ == '__main__':
-    print(calculateWinningBoard(importData()))
+    print(calculateOverlaps(importData()))

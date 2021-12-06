@@ -10,13 +10,13 @@ def importData():
 class Test_TestPart1(unittest.TestCase):
     def test_part1(self):
 
-        self.assertEqual(part1.calculateOverlaps(importData()), 5)
+        self.assertEqual(part1.calculatePopulation(importData()), 5934)
 
 class Test_TestPart2(unittest.TestCase):
     def test_part2(self):
 
 
-        self.assertEqual(part2.calculateOverlaps(importData()), 12)
+        self.assertEqual(part2.calculatePopulation(importData(),80), 5934)
 
 if __name__ == '__main__':
     unittest.main()
