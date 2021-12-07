@@ -13,8 +13,6 @@ def calculateMinFuelSpend(inputDataArray):
         else:
             cleanInputArray.append(line)
 
-    days = 80
-
     linesplit = inputDataArray[0].split(',')
 
     crabs = []
