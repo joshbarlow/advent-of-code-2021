@@ -1,6 +1,6 @@
 import unittest
 
-import part1, part2
+import part1
 
 def importData():
     with open('test_input.txt') as input_file:
